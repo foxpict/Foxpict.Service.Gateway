@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Foxpict.Common.Core\Foxpict.Common.Core.csproj" />
+    <ProjectReference Include="..\Foxpict.Common.Model\Foxpict.Common.Model.csproj" />
+
+    <ProjectReference Include="..\Foxpict.Service.Infra\Foxpict.Service.Infra.csproj" />
+    <ProjectReference Include="..\Foxpict.Service.Model\Foxpict.Service.Model.csproj" />
+    <ProjectReference Include="..\Foxpict.Service.Extention.Sdk\Foxpict.Service.Extention.Sdk.csproj" />
+    <ProjectReference Include="..\Hyperion.Pf.Entity\Hyperion.Pf.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.2" />
+  </ItemGroup>
+
+</Project>
