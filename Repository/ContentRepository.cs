@@ -5,6 +5,7 @@ using Foxpict.Service.Infra;
 using Foxpict.Service.Infra.Model;
 using Foxpict.Service.Infra.Repository;
 using Foxpict.Service.Model;
+using Katalib.Nc.Standard.String;
 
 namespace Foxpict.Service.Gateway.Repository
 {
@@ -54,6 +55,7 @@ namespace Foxpict.Service.Gateway.Repository
         public IContent New()
         {
             var entity = new Content();
+            entity.IdentifyKey = RandomAlphameric.RandomAlphanumeric (10);
             return this.Add(entity);
         }
     }
