@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hyperion.Pf.Entity.Repository;
-using Microsoft.EntityFrameworkCore;
+using Foxpict.Common.Core;
+using Foxpict.Common.Core.Utils;
 using Foxpict.Service.Infra;
 using Foxpict.Service.Infra.Model;
 using Foxpict.Service.Infra.Repository;
 using Foxpict.Service.Model;
+using Hyperion.Pf.Entity.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Foxpict.Service.Gateway.Repository {
   public class LabelRepository : PixstockAppRepositoryBase<Label, ILabel>, ILabelRepository {
@@ -47,6 +50,20 @@ namespace Foxpict.Service.Gateway.Repository {
       return set.Where (x => x.ParentLabel == null);
     }
 
+    string GenerateNormalizeName (string name) {
+      string ws = name;
+
+      ws = NormalizeStringUtil.ToHankakuSign (ws);
+
+      ws = NormalizeStringUtil.SanitizeCjkSign (ws);
+
+      ws = NormalizeStringUtil.RemoveSpace (ws);
+
+      ws = NormalizeStringUtil.ToHankaku (ws);
+
+      return ws;
+    }
+
     /// <summary>
     /// エンティティの読み込み
     /// </summary>
@@ -64,30 +81,44 @@ namespace Foxpict.Service.Gateway.Repository {
     }
 
     public ILabel LoadByName (string name) {
+      var nmzName = GenerateNormalizeName (name);
+
       var set = _dbset
         .Include (prop => prop.ParentLabel)
         .Include (prop => prop.Categories)
         .ThenInclude (category => category.Category)
         .Include (prop => prop.Contents)
         .ThenInclude (content => content.Content);
-      var entity = set.Where (x => x.Name == name).FirstOrDefault ();
+      var entity = set.Where (x => x.NormalizeName == nmzName).FirstOrDefault ();
       return entity;
     }
 
     public ILabel LoadByName (string name, string ownerType) {
+      var nmzName = GenerateNormalizeName (name);
+
       var set = _dbset
         .Include (prop => prop.ParentLabel)
         .Include (prop => prop.Categories)
         .ThenInclude (category => category.Category)
         .Include (prop => prop.Contents)
         .ThenInclude (content => content.Content);
-      var entity = set.Where (x => x.Name == name /*&& x.OwnerType == ownerType*/ ).FirstOrDefault ();
+      var entity = set.Where (x => x.NormalizeName == nmzName /*&& x.OwnerType == ownerType*/ ).FirstOrDefault ();
       return entity;
     }
 
     public ILabel New () {
       var entity = new Label ();
       return this.Add (entity);
+    }
+
+    public void UpdateNormalizeName (ILabel label) {
+      const int logicVersion = 1;
+      Label labelImpl = label as Label;
+      if (labelImpl == null)
+        throw new ApplicationException ("Labelクラスへのキャストに失敗しました。");
+
+      labelImpl.NormalizeLogicVersion = logicVersion;
+      labelImpl.NormalizeName = GenerateNormalizeName (labelImpl.Name);
     }
 
     IEnumerable<ILabel> ILabelRepository.GetAll () {
