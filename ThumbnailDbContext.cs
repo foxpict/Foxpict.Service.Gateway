@@ -5,6 +5,7 @@ using Foxpict.Service.Infra.Model;
 using Foxpict.Service.Model;
 using Hyperion.Pf.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using NLog;
 
 namespace Foxpict.Service.Gateway {
@@ -29,6 +30,10 @@ namespace Foxpict.Service.Gateway {
     public ThumbnailDbContext (IApplicationContext context, IAppSettings appSettings) {
       this.context = context;
       this.mAppSettings = appSettings;
+    }
+
+    public IDbContextTransaction BeginTransaction() {
+      return this.Database.BeginTransaction();
     }
 
     protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder) {

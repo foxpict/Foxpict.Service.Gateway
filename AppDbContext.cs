@@ -9,6 +9,7 @@ using Hyperion.Pf.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using NLog;
 
 namespace Foxpict.Service.Gateway {
@@ -39,10 +40,16 @@ namespace Foxpict.Service.Gateway {
 
     public DbSet<EavDate> EavDates { get; set; }
 
+    public DbSet<EventLog> EventLogs { get; set; }
+
     public AppDbContext (IApplicationContext context, ExtentionManager extentionManager, IAppSettings appSettings) {
       this.context = context;
       this.extentionManager = extentionManager;
       this.mAppSettings = appSettings;
+    }
+
+    public IDbContextTransaction BeginTransaction() {
+      return this.Database.BeginTransaction();
     }
 
     protected IApplicationContext Context { get => context; }
